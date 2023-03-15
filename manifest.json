@@ -19,7 +19,9 @@
     },
     "options_page": "options.html",
     "permissions": [
-        "storage"
+        "storage",
+        "alarms",
+        "notifications"
     ],
     "background": {
         "service_worker": "background.js"

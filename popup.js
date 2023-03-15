@@ -1,22 +1,43 @@
 const timeElement = document.getElementById("time");
-const nameEl = document.getElementById("name");
+const nameElement = document.getElementById("name");
+const timerElement = document.getElementById("timer");
 
-const currentTime = new Date().toLocaleTimeString();
+function updateTimeElements() {
+  chrome.storage.local.get(["timer"], (res) => {
+    const timer = res.timer ?? 0;
+    timerElement.textContent = `The timer is at ${timer} seconds`;
+  });
+  const currentTime = new Date().toLocaleTimeString();
+  timeElement.innerHTML = `<h3>The time is ${currentTime}</h3>`;
+}
 
-timeElement.innerHTML = `<h3>The time is ${currentTime}</h3>`;
-
-chrome.action.setBadgeText(
-  {
-    text: "TIME",
-  },
-  () => {
-    console.log("Finished setting badge text.");
-  }
-);
+updateTimeElements();
+setInterval(updateTimeElements, 1000);
 
 chrome.storage.sync.get(["name"], (res) => {
   const name = res.name ?? "";
-  nameEl.textContent = `Your name is ${name}`;
+  nameElement.textContent = `Your name is ${name}`;
 });
 
-console.log(this);
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const resetBtn = document.getElementById("reset");
+
+startBtn.addEventListener("click", () => {
+  chrome.storage.local.set({
+    isRunning: true,
+  });
+});
+
+stopBtn.addEventListener("click", () => {
+  chrome.storage.local.set({
+    isRunning: false,
+  });
+});
+
+resetBtn.addEventListener("click", () => {
+  chrome.storage.local.set({
+    timer: 0,
+    isRunning: false,
+  });
+});
